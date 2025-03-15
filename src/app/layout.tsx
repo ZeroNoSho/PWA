@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import { Provider } from "../context/store";
+import { SessionProvider } from "next-auth/react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,15 +24,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <meta name="apple-mobile-web-app-title" content="Point Of Sale" />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <head>
+          <meta name="apple-mobile-web-app-title" content="Point Of Sale" />
+          <link rel="icon" type="image/png" href="/favicon.png" />
+          <link rel="shortcut icon" href="/favicon.ico" />
+        </head>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Provider> {children}</Provider>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

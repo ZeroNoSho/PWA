@@ -1,0 +1,150 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model user {
+  iduser                  String                   @id @default(auto()) @map("_id") @db.ObjectId
+  email                   String                   @unique
+  username                String
+  password                String
+  role                    String
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt    
+}
+
+model satuan{
+  idsatuan                String              @id @default(auto()) @map("_id") @db.ObjectId
+  satuanname              String
+
+  idbarang                String[]            @db.ObjectId
+  barang                  barang[]            @relation(fields: [idbarang], references: [idbarang]) 
+  idbahan                 String[]            @db.ObjectId
+  bahan                   bahan[]             @relation(fields: [idbahan], references: [idbahan]) 
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model kategori{
+  idkategori              String              @id @default(auto()) @map("_id") @db.ObjectId
+  kategoriname            String
+
+  idbarang                String[]            @db.ObjectId
+  barang                  barang[]            @relation(fields: [idbarang], references: [idbarang]) 
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model bahan{
+  
+  idbahan                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  bahanname               String
+  deskripsi               String
+
+  idsatuan                String[]           @db.ObjectId
+  satuan                  satuan[]           @relation(fields: [idsatuan], references: [idsatuan]) 
+  idtransaksi             String[]           @db.ObjectId
+  transaksimasuk          transaksimasuk[]        @relation(fields: [idtransaksi], references: [idtransaksi]) 
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model barang{
+  idbarang                String              @id @default(auto()) @map("_id") @db.ObjectId
+  barangname              String
+  stock                   Int
+  deskripsi               String
+  harga                   Int
+
+  idkategori              String[]           @db.ObjectId
+  kategori                kategori[]         @relation(fields: [idkategori], references: [idkategori]) 
+  idsatuan                String[]           @db.ObjectId
+  satuan                  satuan[]           @relation(fields: [idsatuan], references: [idsatuan]) 
+  idtransaksi             String[]           @db.ObjectId
+  transaksikeluar         transaksikeluar[]        @relation(fields: [idtransaksi], references: [idtransaksi]) 
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transaksikeluarnote{
+  idtransaksikeluarnote   String          @id @default(auto()) @map("_id") @db.ObjectId
+  ppn                    Int
+  total                  Int
+  pembayaran             String
+  lokasi                 String
+  name                   String
+  transaksikeluar        transaksikeluar[]
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transaksikeluar{
+  idtransaksi            String              @id @default(auto()) @map("_id") @db.ObjectId
+  quantity               Int
+  
+  idtransaksimasuknote   String                     @db.ObjectId
+  transaksikeluarnote    transaksikeluarnote        @relation(fields: [idtransaksimasuknote], references: [idtransaksikeluarnote]) 
+ 
+  idbarang               String[]            @db.ObjectId
+  barang                 barang[]            @relation(fields: [idbarang], references: [idbarang]) 
+ 
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transaksimasuknote{
+  idtransaksimasuknote   String          @id @default(auto()) @map("_id") @db.ObjectId
+
+  total                  Int
+
+  pembayaran             String
+  transaksimasuk         transaksimasuk[]
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transaksimasuk{
+  idtransaksi            String              @id @default(auto()) @map("_id") @db.ObjectId
+  quantity               Int
+  harga                  Int
+  
+  idtransaksimasuknote                String                    @db.ObjectId
+  transaksimasuknote                  transaksimasuknote        @relation(fields: [idtransaksimasuknote], references: [idtransaksimasuknote]) 
+
+  idbahan                String[]            @db.ObjectId
+  bahan                  bahan[]             @relation(fields: [idbahan], references: [idbahan]) 
+
+  isDelet   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model labah{
+  id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+  Listrik             Int
+  Internet            Int
+  Gas                 Int
+  Transportasi        Int
+  PengeluaranLain     Int
+  PendapatanLain      Int
+  Karyawan            Int
+}
